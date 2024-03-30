@@ -1,6 +1,4 @@
-using Dates
-using JLD2
-using dynamical_core
+import Dates
 
 
 function Shallow_Water_Main(;model_name::String = "Shallow_Water",
@@ -18,15 +16,15 @@ function Shallow_Water_Main(;model_name::String = "Shallow_Water",
     ### Model setting
     
     # Meta
-    creation_time = Dates.format(Dates.now(), dateformat"yyyymmdd\THHMMSSsss")
+    creation_time = Dates.format(Dates.now(), "yyyy-mm-dd HH:MM:SS")
     fname_prefix = "SWM_"
     fname = string(rand(1000000:10000000-1))
     fname_suffix = ".jld2" # JLD2 package
     output_filename = fname_prefix * fname * fname_suffix 
     
     # Resolution
-    nλ = 128
-    nθ = 64
+    nλ = 512
+    nθ = 256
     nd = 1
     num_fourier = floor(Int64, nθ*(2/3))
     num_spherical = num_fourier + 1
@@ -40,7 +38,7 @@ function Shallow_Water_Main(;model_name::String = "Shallow_Water",
     # Time
     start_time = 0
     end_time = 86400*5
-    Δt = 3600
+    Δt = 60
     
     # Convective efficiency
     kappa_chi = 1 / (0.5 * 86400)
@@ -199,7 +197,7 @@ function Shallow_Water_Main(;model_name::String = "Shallow_Water",
             Update_Init_Step!(integrator = integrator)
         end
         
-        if (integrator.time%hour_to_sec == 0 && false)
+        if (integrator.time%hour_to_sec == 0)
             println(repeat("***", 30))
             println("Hour: ", (÷(integrator.time, hour_to_sec)))
             println("     zonal wind: ",

@@ -1,6 +1,9 @@
+################################################################################
 export Background_Vorticity_Strip
 export Isolated_Vorticity_Blob
 export Apply_InverseLaplacian!
+################################################################################
+
 
 function Background_Vorticity_Strip(;mesh::Spectral_Spherical_Mesh,
                                     atmo_data::Atmo_Data,
@@ -118,6 +121,7 @@ function Background_Vorticity_Strip(;mesh::Spectral_Spherical_Mesh,
     
     return (grid_u, grid_v, grid_vor, grid_div, grid_h, spe_vor_c, spe_div_c, spe_h_c)
 end
+
 
 function Isolated_Vorticity_Blob(;mesh::Spectral_Spherical_Mesh,
                                  atmo_data::Atmo_Data,
@@ -247,6 +251,7 @@ function Isolated_Vorticity_Blob(;mesh::Spectral_Spherical_Mesh,
     
     return (grid_u, grid_v, grid_vor, grid_div, grid_h, spe_vor_c, spe_div_c, spe_h_c)
 end
+
 
 function Apply_InverseLaplacian!(mesh::Spectral_Spherical_Mesh,
                                  spherical_u::Array{ComplexF64,3})

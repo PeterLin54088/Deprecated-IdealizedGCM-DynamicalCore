@@ -1,5 +1,9 @@
+################################################################################
+# 
 export Dyn_Data
+# Time-forwarding
 export Time_Advance!
+################################################################################
 
 
 mutable struct Dyn_Data
@@ -10,6 +14,7 @@ mutable struct Dyn_Data
     # Meta
     name::String
     
+    #########################################################
     # Resolution
     num_fourier::Int64
     num_spherical::Int64
@@ -115,8 +120,8 @@ mutable struct Dyn_Data
     grid_δlnps::Array{Float64,3}
     
     grid_δps::Array{Float64,3}
-    grid_p_full::Array{Float64,3} # pressure at full level
-    grid_p_half::Array{Float64,3} # pressure at half level
+    grid_p_full::Array{Float64,3}   # pressure at full level
+    grid_p_half::Array{Float64,3}   # pressure at half level
     grid_lnp_full::Array{Float64,3} # ln pressure at full level
     grid_lnp_half::Array{Float64,3} # ln pressure at half level
     grid_Δp::Array{Float64,3}       # pressure difference at each level
@@ -141,7 +146,7 @@ mutable struct Dyn_Data
     grid_energy_full::Array{Float64,3}
     
     # geopotential 
-    grid_geopots::Array{Float64,3} #surface geopotential
+    grid_geopots::Array{Float64,3} # surface geopotential
     grid_geopot_full::Array{Float64,3}
     grid_geopot_half::Array{Float64,3}
 
@@ -301,7 +306,7 @@ function Dyn_Data(;name::String,
     grid_energy_full = zeros(Float64, nλ,  nθ, nd)
     
     # geopotential 
-    grid_geopots = zeros(Float64, nλ,  nθ, 1) #surface geopotential
+    grid_geopots = zeros(Float64, nλ,  nθ, 1) # surface geopotential
     grid_geopot_full = zeros(Float64, nλ,  nθ, nd)
     grid_geopot_half = zeros(Float64, nλ,  nθ, nd+1)
 
@@ -323,7 +328,7 @@ function Dyn_Data(;name::String,
     #
     spe_zeros = zeros(ComplexF64, num_fourier+1, num_spherical+1, nd)
     
-    
+    ########################################################################
     Dyn_Data(name, num_fourier, num_spherical, nλ, nθ, nd, num_tracers,
     ########################################################################
              grid_u_n, grid_u_c, grid_u_p,
@@ -359,6 +364,7 @@ function Dyn_Data(;name::String,
              grid_d_full1, grid_d_full2, 
              grid_d_half1, grid_d_half2,
              spe_zeros)
+    ########################################################################
 end
 
 function Time_Advance!(;dyn_data::Dyn_Data)
@@ -366,7 +372,7 @@ function Time_Advance!(;dyn_data::Dyn_Data)
     Update model states, following leapfrog scheme.
     """
     
-    # update grid variables
+    # forward grid variables
     dyn_data.grid_u_p .= dyn_data.grid_u_c
     dyn_data.grid_u_c .= dyn_data.grid_u_n
 
@@ -384,7 +390,7 @@ function Time_Advance!(;dyn_data::Dyn_Data)
         dyn_data.grid_tracers_c .= dyn_data.grid_tracers_n
     end
     
-    # update spectral variables
+    # forward spectral variables
     dyn_data.spe_vor_p .= dyn_data.spe_vor_c
     dyn_data.spe_vor_c .= dyn_data.spe_vor_n
     

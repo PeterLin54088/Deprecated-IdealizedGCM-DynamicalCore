@@ -1,5 +1,9 @@
+################################################################################
+#
 export Atmo_Data
+# Operators
 export Compute_Abs_Vor!
+################################################################################
 
 
 struct Atmo_Data
@@ -10,6 +14,7 @@ struct Atmo_Data
     # Meta
     name::String
     
+    #########################################################
     # Resolution
     nλ::Int64
     nθ::Int64
@@ -50,11 +55,13 @@ function Atmo_Data(;name::String,
                    rdgas::Float64 = 287.04,
                    rvgas::Float64 = 461.50,
                    kappa::Float64 = 2.0/7.0)
-
+    """
+    Define atmospheric parameters and correction options.
+    """
     coriolis = 2 * omega * sinθ
     cp_air = rdgas/kappa
     
-
+    ########################################################################
     Atmo_Data(name,
     ########################################################################
               nλ, nθ, nd,
@@ -63,13 +70,16 @@ function Atmo_Data(;name::String,
               do_water_correction, use_virtual_temperature,
     ########################################################################
               radius, omega, grav, coriolis, rdgas, rvgas, cp_air, kappa)
+    ########################################################################
 end
-
 
 
 function Compute_Abs_Vor!(grid_vor::Array{Float64,3}, 
                           coriolis::Array{Float64,1}, 
                           grid_absvor::Array{Float64,3})
+    """
+    Compute absolute vorticity.
+    """
     nλ, nθ, nd = size(grid_vor)
     for j=1:nθ
         grid_absvor[:,j,:] .= grid_vor[:,j,:] .+ coriolis[j]

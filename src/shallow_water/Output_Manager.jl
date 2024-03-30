@@ -1,6 +1,11 @@
+################################################################################
+# Container
 export Output_Manager
-export Update_Output!, Update_Output_Init!
-export Finalize_Output!, Generate_Output!
+# Recording (with mutating)
+export Update_Output_Init!, Update_Output!, Finalize_Output!
+# HDF5 output
+export Generate_Output!
+################################################################################
 
 
 mutable struct Output_Manager
@@ -61,6 +66,7 @@ mutable struct Output_Manager
     
 end
 
+
 function Output_Manager(;mesh::Spectral_Spherical_Mesh,
                         integrator::Filtered_Leapfrog,
                         vert_coord::Vert_Coordinate, 
@@ -115,27 +121,31 @@ function Output_Manager(;mesh::Spectral_Spherical_Mesh,
     div_daily_mean = zeros(Float64, nλ, nθ, nd, n_day)
     data_density2 = zeros(Int64, n_day) # data counter
     
-    
+    ########################################################################
     output_manager = Output_Manager(creation_time, filename,
-                                    ########################################
+    ########################################################################
                                     hour_to_sec, day_to_sec,
-                                    ########################################
+    ########################################################################
                                     num_fourier, num_spherical, nλ, nθ, nd,
-                                    ########################################
+    ########################################################################
                                     start_time, end_time, current_time, 
                                     n_hour, n_day, Δt, 
                                     damping_order, damping_coef, robert_coef,
-                                    ########################################
+    ########################################################################
                                     λc, θc, σc,
-                                    ########################################
-                                    u_hourly_mean, v_hourly_mean, h_hourly_mean, 
-                                    q_hourly_mean, vor_hourly_mean, div_hourly_mean, 
+    ########################################################################
+                                    u_hourly_mean, v_hourly_mean, 
+                                    h_hourly_mean, q_hourly_mean, 
+                                    vor_hourly_mean, div_hourly_mean, 
                                     data_density1,
-                                    ########################################
-                                    u_daily_mean, v_daily_mean, h_daily_mean, 
-                                    q_daily_mean, vor_daily_mean, div_daily_mean, 
+    ########################################################################
+                                    u_daily_mean, v_daily_mean, 
+                                    h_daily_mean, q_daily_mean, 
+                                    vor_daily_mean, div_daily_mean, 
                                     data_density2)
+    ########################################################################
 end
+
 
 function Update_Output_Init!(;output_manager::Output_Manager, 
                              dyn_data::Dyn_Data, 
@@ -179,6 +189,7 @@ function Update_Output_Init!(;output_manager::Output_Manager,
     div_daily_mean[:,:,:,t_index] .+= dyn_data.grid_div
     data_density2[t_index] += 1
 end
+
 
 function Update_Output!(;output_manager::Output_Manager, 
                         dyn_data::Dyn_Data, 
@@ -229,6 +240,7 @@ function Update_Output!(;output_manager::Output_Manager,
     output_manager.current_time = current_time
 end
 
+
 function Finalize_Output!(;output_manager::Output_Manager)
     """
     Calculate "daily" mean. 
@@ -269,6 +281,7 @@ function Finalize_Output!(;output_manager::Output_Manager)
         data_density2[time] = 1
     end
 end
+
 
 function Generate_Output!(;output_manager::Output_Manager,
                           default_path::String = "exp/shallow_water/output")
@@ -326,5 +339,4 @@ function Generate_Output!(;output_manager::Output_Manager,
         file["vor_daily_mean"] = output_manager.vor_daily_mean
         file["div_daily_mean"] = output_manager.div_daily_mean
     end
-    pwd()
 end

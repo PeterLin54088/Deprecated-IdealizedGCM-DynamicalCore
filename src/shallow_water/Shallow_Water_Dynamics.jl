@@ -1,5 +1,7 @@
-# export Implicit_Correction!
+################################################################################
 export Shallow_Water_Dynamics!
+export Implicit_Correction!
+################################################################################
 
 
 function Shallow_Water_Dynamics!(;mesh::Spectral_Spherical_Mesh, 

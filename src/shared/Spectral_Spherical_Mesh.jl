@@ -1,5 +1,5 @@
 ################################################################################
-# Struct
+# 
 export Spectral_Spherical_Mesh
 # Coordinate transform
 export Trans_Spherical_To_Grid!, Trans_Grid_To_Spherical!, Trans_Grid_To_Fourier!
@@ -158,67 +158,7 @@ function Spectral_Spherical_Mesh(;num_fourier::Int64,
     spherical_d2 = zeros(Float64, num_fourier + 1, num_spherical + 1, nd) 
     spherical_ds1 = zeros(Float64, num_fourier + 1, num_spherical + 1, 1) 
     spherical_ds2 = zeros(Float64, num_fourier + 1, num_spherical + 1, 1)
-    """
-    """
-    # Resolution
-    num_fourier::Int64
-    num_spherical::Int64
-    nλ::Int64
-    nθ::Int64
-    nd::Int64
     
-    # Cell centre
-    λc::Array{Float64,1}
-    θc::Array{Float64,1}
-    
-    # Cell boundary
-    λe::Array{Float64,1}
-    θe::Array{Float64,1}
-    
-    # Spherical coordinate
-    sinθ::Array{Float64,1}
-    cosθ::Array{Float64,1}
-    
-    # Laplacian operators
-    laplacian_eig::Array{Float64,2} 
-    wave_numbers::Array{Int64, 2}
-    
-    # Legendre polynomials
-    qnm::Array{Float64,3}
-    dqnm::Array{Float64,3}
-    qwg::Array{Float64,3}
-    
-    # Numerical integration
-    wts::Array{Float64,1}
-    
-    # Numerical derivatives
-    epsilon::Array{Float64,2}
-    coef_alp_a::Array{Float64,3} 
-    coef_alp_b::Array{Float64,3} 
-    
-    coef_uvm::Array{Float64,2} 
-    coef_uvc::Array{Float64,2} 
-    coef_uvp::Array{Float64,2}
-    
-    coef_dλ::Array{Float64,2}  
-    coef_dθm::Array{Float64,2}  
-    coef_dθp::Array{Float64,2}
-    
-    # Temporary wrapper 
-    fourier_d1::Array{ComplexF64,3}
-    fourier_d2::Array{ComplexF64,3}
-    fourier_ds1::Array{ComplexF64,3}
-    fourier_ds2::Array{ComplexF64,3}
-    
-    grid_d1::Array{Float64,3}
-    grid_d2::Array{Float64,3}
-    grid_ds1::Array{Float64,3}
-    grid_ds2::Array{Float64,3}
-    
-    spherical_d1::Array{ComplexF64,3}
-    spherical_d2::Array{ComplexF64,3}
-    spherical_ds1::Array{ComplexF64,3}
-    spherical_ds2::Array{ComplexF64,3}
     Spectral_Spherical_Mesh(radius,
     ########################################################################
                             num_fourier, num_spherical, nλ, nθ, nd,

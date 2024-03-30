@@ -1,6 +1,7 @@
 ################################################################################
-# export
-export Compute_Legendre!, Compute_Gaussian!
+# Operators
+export Compute_Legendre!
+export Compute_Gaussian!
 ################################################################################
 
 
@@ -27,7 +28,6 @@ function Compute_Legendre!(num_fourier, num_spherical, sinθ, nθ)
     
     ########################################
     ### Legendre polynomials, P_{m,l}
-    
     # P_{0,0} = 1
     qnm[1, 1, :] .= 1.0
     # P_{m,m}
@@ -47,7 +47,6 @@ function Compute_Legendre!(num_fourier, num_spherical, sinθ, nθ)
 
     ########################################
     ### Legendre polynomials with respect to μ, d(P_{m,l})/dμ
-    
     for m = 0:num_fourier
         for l = m:num_spherical
             if l == m
@@ -57,7 +56,6 @@ function Compute_Legendre!(num_fourier, num_spherical, sinθ, nθ)
             end
         end
     end
-
     return qnm[:,1:num_spherical+1,:], dqnm    
 end
     
