@@ -1,3 +1,7 @@
+export Background_Vorticity_Strip
+export Isolated_Vorticity_Blob
+export Apply_InverseLaplacian!
+
 function Background_Vorticity_Strip(;mesh::Spectral_Spherical_Mesh,
                                     atmo_data::Atmo_Data,
                                     dyn_data::Dyn_Data,
@@ -216,7 +220,7 @@ function Isolated_Vorticity_Blob(;mesh::Spectral_Spherical_Mesh,
     spe_h_c[1,1] = 0.0 # NO mean thickness
     Trans_Spherical_To_Grid!(mesh, spe_h_c, grid_h)
     
-   if IsDisplay
+    if IsDisplay
         println(repeat("###", 30))
         println("Initial perturbation      zonal wind: ",
                     (round(minimum(grid_u); digits = 4), 
