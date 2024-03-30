@@ -70,7 +70,7 @@ end
 function Compute_Abs_Vor!(grid_vor::Array{Float64,3}, 
                           coriolis::Array{Float64,1}, 
                           grid_absvor::Array{Float64,3})
-    nλ, nθ, nd = grid_absvor
+    nλ, nθ, nd = size(grid_vor)
     for j=1:nθ
         grid_absvor[:,j,:] .= grid_vor[:,j,:] .+ coriolis[j]
     end
