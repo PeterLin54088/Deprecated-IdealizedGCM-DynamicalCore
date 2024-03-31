@@ -2,8 +2,8 @@
 import Pkg
 
 cd()
-Pkg.activate("dynamical_core")
-cd("dynamical_core")
+Pkg.activate("Dynamical_Core_Julia")
+cd("Dynamical_Core_Julia")
 
 # import local
 using dynamical_core
