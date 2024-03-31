@@ -15,7 +15,7 @@ mutable struct Output_Manager
     """
     # Meta
     creation_time::String
-    filename::String
+    datapath::String
     
     # Convert
     hour_to_sec::Int64
@@ -73,7 +73,7 @@ function Output_Manager(;mesh::Spectral_Spherical_Mesh,
                         start_time::Int64, 
                         end_time::Int64,
                         creation_time::String,
-                        filename::String = "default_dataset_from_JGCM.jld2",
+                        datapath::String,
                         hour_to_sec = 3600,
                         day_to_sec = 86400)
     """
@@ -122,7 +122,7 @@ function Output_Manager(;mesh::Spectral_Spherical_Mesh,
     data_density2 = zeros(Int64, n_day) # data counter
     
     ########################################################################
-    output_manager = Output_Manager(creation_time, filename,
+    output_manager = Output_Manager(creation_time, datapath,
     ########################################################################
                                     hour_to_sec, day_to_sec,
     ########################################################################
@@ -283,34 +283,25 @@ function Finalize_Output!(;output_manager::Output_Manager)
 end
 
 
-function Generate_Output!(;output_manager::Output_Manager,
-                          default_path::String = "exp/shallow_water/output")
+function Generate_Output!(;output_manager::Output_Manager)
     """
     Write outputs into HDF5 file.
     """
-    
-    if isdir(default_path)
-        # 
-    else
-        println("Generate output folder!")
-        mkdir(default_path)
-    end
-    
-    prefix = default_path * "/"
-    fpath = prefix * output_manager.filename
-    
-    jldopen(fpath, "w+") do file
+    jldopen(output_manager.datapath, "a+") do file
         
         # Meta
         file["creation_time"] = output_manager.creation_time
-        file["num_daily_data"] = output_manager.n_day
         
         # Resolution
+            # Time
+        file["num_daily_data"] = output_manager.n_day
+            # Horizontal
         file["num_longitude"] = output_manager.nλ
         file["num_latitude"] = output_manager.nθ
-        file["num_vertical"] = output_manager.nd
         file["num_zonal_spectral_modes"] = output_manager.num_fourier
         file["num_meridional_spectral_modes"] = output_manager.num_spherical
+            # Vertical
+        file["num_vertical"] = output_manager.nd
         
         # Coordinate
         file["longitude"] = output_manager.λc

@@ -1,5 +1,6 @@
 import Dates
-include("output_docs.jl")
+using JLD2
+include("__output_docs.jl")
 
 
 function Shallow_Water_Main(;model_name::String = "Shallow_Water",
@@ -17,19 +18,17 @@ function Shallow_Water_Main(;model_name::String = "Shallow_Water",
     ### Model setting
     
     # Meta
-        # Time marks
-    creation_time = Dates.format(Dates.now(), "yyyy-mm-dd HH:MM:SS")
-        # Output datasets
-    fname_prefix = "SWM_"
-    fname = string(rand(1000000:10000000-1))
-    fname_suffix = ".jld2" # JLD2 package
-    output_filename = fname_prefix * fname * fname_suffix
-        # Output documents
-    fname_prefix = "output_"
-    fname_suffix = ".txt"
-    tmp = fname_prefix * fname * fname_suffix
-    output_docs = open("exp/shallow_water/output/" * tmp, "w+")
-    
+        # Time mark
+    creation_time = Dates.format(Dates.now(), "yyyy_mmdd_HHMMSS")
+        # Path
+    datapath, logpath = filepath_constructor(creation_time)
+        # File
+    jldopen(datapath, "w+") do file
+        # 
+    end
+    open(logpath, "w+") do file
+        #  
+    end
     # Resolution
     nλ = 128
     nθ = 64
@@ -128,7 +127,7 @@ function Shallow_Water_Main(;model_name::String = "Shallow_Water",
                                     start_time = start_time, 
                                     end_time = end_time, 
                                     creation_time = creation_time, 
-                                    filename = output_filename)
+                                    datapath = datapath)
     
     ########################################
     ### Initialize variable field
@@ -152,7 +151,7 @@ function Shallow_Water_Main(;model_name::String = "Shallow_Water",
                                                   vor_amp = vor_b_amplitude,
                                                   vor_lat = vor_b_latitude, 
                                                   vor_width = vor_b_width)
-    Display_Initial_Background!(file = output_docs,
+    Display_Initial_Background!(logpath = logpath,
                                 grid_u = background_field[1],
                                 grid_v = background_field[2],
                                 grid_h = background_field[5],
@@ -166,7 +165,7 @@ function Shallow_Water_Main(;model_name::String = "Shallow_Water",
                                                  vor_lon = vor_a_longitude,
                                                  vor_lat = vor_a_latitude,
                                                  vor_width = vor_a_width)
-    Display_Initial_Perturbation!(file = output_docs,
+    Display_Initial_Perturbation!(logpath = logpath,
                                   grid_u = perturbation_field[1],
                                   grid_v = perturbation_field[2],
                                   grid_h = perturbation_field[5],
@@ -216,7 +215,7 @@ function Shallow_Water_Main(;model_name::String = "Shallow_Water",
         end
         
         if (integrator.time%hour_to_sec == 0)
-            Display_Current_State!(file = output_docs,
+            Display_Current_State!(logpath = logpath,
                                    tick = div(integrator.time, hour_to_sec),
                                    grid_u = grid_u,
                                    grid_v = grid_v,
@@ -230,6 +229,30 @@ function Shallow_Water_Main(;model_name::String = "Shallow_Water",
     ### Output stage
     Finalize_Output!(output_manager = output_manager)
     Generate_Output!(output_manager = output_manager)
-    close(output_docs)
+    
     return nothing
+end
+
+function filepath_constructor(time::String,
+                              default_path = "exp/shallow_water/output/")
+    """
+    
+    """
+    
+    if isdir(default_path)
+        
+    else
+        mkdir(default_path)
+    end
+    
+    # Dataset
+    data_prefix = "Datasets_"
+    data_suffix = ".jld2" # JLD2 package
+    datapath = default_path * data_prefix * time * data_suffix
+    # Log
+    log_prefix = "Logs_"
+    log_suffix = ".txt"
+    logpath = default_path * log_prefix * time * log_suffix
+    
+    return datapath, logpath
 end
