@@ -1,3 +1,6 @@
+# output docs
+output_*.txt
+
 # HDF5
 *.h5
 *jld2
