@@ -11,8 +11,7 @@ function Background_Vorticity_Strip(;mesh::Spectral_Spherical_Mesh,
                                     vor_amp::Float64 = 1.0,
                                     vor_lat::Float64 = 0.0, 
                                     vor_width::Float64 = 1.0,
-                                    DEG_TO_RAD::Float64 = pi/180,
-                                    IsDisplay::Bool = true)
+                                    DEG_TO_RAD::Float64 = pi/180)
     """
     Generate background vorticity and corresponding balance height.
     The actual vorticity amplitude is reduced due to implementation,
@@ -94,31 +93,6 @@ function Background_Vorticity_Strip(;mesh::Spectral_Spherical_Mesh,
     spe_h_c[1,1] = 0.0 # NO mean thickness
     Trans_Spherical_To_Grid!(mesh, spe_h_c, grid_h)
     
-    if IsDisplay
-        println(repeat("###", 30))
-        println("Initial background      zonal wind: ",
-                    (round(minimum(grid_u); digits = 4), 
-                    round(maximum(grid_u); digits = 4)),
-                " (m/s)")
-        println("Initial background meridional wind: ",
-                    (round(minimum(grid_v); digits = 4), 
-                    round(maximum(grid_v); digits = 4)),
-                " (m/s)")
-        println("Initial background   geopot height: ", 
-                    (round(minimum(grid_h); digits = 4), 
-                    round(maximum(grid_h); digits = 4)),
-                " (m * m*s-2)")
-        println("Initial background       vorticity: ", 
-                    (round(minimum(grid_vor); digits = 9), 
-                    round(maximum(grid_vor); digits = 9)),
-                " (1/s)")
-        println("Initial background      divergence: ", 
-                    (round(minimum(grid_div); digits = 9), 
-                    round(maximum(grid_div); digits = 9)),
-                " (1/s)")
-        println(repeat("###", 30))
-    end
-    
     return (grid_u, grid_v, grid_vor, grid_div, grid_h, spe_vor_c, spe_div_c, spe_h_c)
 end
 
@@ -130,8 +104,7 @@ function Isolated_Vorticity_Blob(;mesh::Spectral_Spherical_Mesh,
                                  vor_lon::Float64 = 0.0,
                                  vor_lat::Float64 = 0.0, 
                                  vor_width::Float64 = 1.0,
-                                 DEG_TO_RAD::Float64 = pi/180,
-                                 IsDisplay::Bool = true)
+                                 DEG_TO_RAD::Float64 = pi/180)
     """
     Generate perturbation vorticity and corresponding balance height.
     The actual vorticity amplitude is reduced due to implementation,
@@ -223,31 +196,6 @@ function Isolated_Vorticity_Blob(;mesh::Spectral_Spherical_Mesh,
     ### Output stage (for mass field)
     spe_h_c[1,1] = 0.0 # NO mean thickness
     Trans_Spherical_To_Grid!(mesh, spe_h_c, grid_h)
-    
-    if IsDisplay
-        println(repeat("###", 30))
-        println("Initial perturbation      zonal wind: ",
-                    (round(minimum(grid_u); digits = 4), 
-                    round(maximum(grid_u); digits = 4)),
-                " (m/s)")
-        println("Initial perturbation meridional wind: ",
-                    (round(minimum(grid_v); digits = 4), 
-                    round(maximum(grid_v); digits = 4)),
-                " (m/s)")
-        println("Initial perturbation          height: ", 
-                    (round(minimum(grid_h)/9.80; digits = 4), 
-                    round(maximum(grid_h)/9.80; digits = 4)),
-                " (m)")
-        println("Initial perturbation       vorticity: ", 
-                    (round(minimum(grid_vor); digits = 9), 
-                    round(maximum(grid_vor); digits = 9)),
-                " (1/s)")
-        println("Initial perturbation      divergence: ", 
-                    (round(minimum(grid_div); digits = 9), 
-                    round(maximum(grid_div); digits = 9)),
-                " (1/s)")
-        println(repeat("###", 30))
-    end
     
     return (grid_u, grid_v, grid_vor, grid_div, grid_h, spe_vor_c, spe_div_c, spe_h_c)
 end

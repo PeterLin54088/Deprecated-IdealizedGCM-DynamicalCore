@@ -1,4 +1,5 @@
 import Dates
+include("output_docs.jl")
 
 
 function Shallow_Water_Main(;model_name::String = "Shallow_Water",
@@ -16,15 +17,22 @@ function Shallow_Water_Main(;model_name::String = "Shallow_Water",
     ### Model setting
     
     # Meta
+        # Time marks
     creation_time = Dates.format(Dates.now(), "yyyy-mm-dd HH:MM:SS")
+        # Output datasets
     fname_prefix = "SWM_"
     fname = string(rand(1000000:10000000-1))
     fname_suffix = ".jld2" # JLD2 package
-    output_filename = fname_prefix * fname * fname_suffix 
+    output_filename = fname_prefix * fname * fname_suffix
+        # Output documents
+    fname_prefix = "output_"
+    fname_suffix = ".txt"
+    tmp = fname_prefix * fname * fname_suffix
+    output_docs = open("exp/shallow_water/output/" * tmp, "w+")
     
     # Resolution
-    nλ = 512
-    nθ = 256
+    nλ = 128
+    nθ = 64
     nd = 1
     num_fourier = floor(Int64, nθ*(2/3))
     num_spherical = num_fourier + 1
@@ -37,8 +45,8 @@ function Shallow_Water_Main(;model_name::String = "Shallow_Water",
     
     # Time
     start_time = 0
-    end_time = 86400*5
-    Δt = 60
+    end_time = 86400*1
+    Δt = 3600
     
     # Convective efficiency
     kappa_chi = 1 / (0.5 * 86400)
@@ -143,8 +151,13 @@ function Shallow_Water_Main(;model_name::String = "Shallow_Water",
                                                   dyn_data = dyn_data,
                                                   vor_amp = vor_b_amplitude,
                                                   vor_lat = vor_b_latitude, 
-                                                  vor_width = vor_b_width,
-                                                  IsDisplay = true)
+                                                  vor_width = vor_b_width)
+    Display_Initial_Background!(file = output_docs,
+                                grid_u = background_field[1],
+                                grid_v = background_field[2],
+                                grid_h = background_field[5],
+                                grid_vor = background_field[3],
+                                grid_div = background_field[4])
     # Perturbation
     perturbation_field = Isolated_Vorticity_Blob(mesh = mesh,
                                                  atmo_data = atmo_data,
@@ -152,8 +165,13 @@ function Shallow_Water_Main(;model_name::String = "Shallow_Water",
                                                  vor_amp = vor_a_amplitude,
                                                  vor_lon = vor_a_longitude,
                                                  vor_lat = vor_a_latitude,
-                                                 vor_width = vor_a_width,
-                                                 IsDisplay = true)
+                                                 vor_width = vor_a_width)
+    Display_Initial_Perturbation!(file = output_docs,
+                                  grid_u = perturbation_field[1],
+                                  grid_v = perturbation_field[2],
+                                  grid_h = perturbation_field[5],
+                                  grid_vor = perturbation_field[3],
+                                  grid_div = perturbation_field[4])
     
     # Total
     grid_u .= (background_field[1] + perturbation_field[1])
@@ -198,29 +216,13 @@ function Shallow_Water_Main(;model_name::String = "Shallow_Water",
         end
         
         if (integrator.time%hour_to_sec == 0)
-            println(repeat("***", 30))
-            println("Hour: ", (÷(integrator.time, hour_to_sec)))
-            println("     zonal wind: ",
-                    (round(minimum(grid_u); digits = 4), 
-                    round(maximum(grid_u); digits = 4)),
-                " (m/s)")
-            println("meridional wind: ",
-                    (round(minimum(grid_v); digits = 4), 
-                    round(maximum(grid_v); digits = 4)),
-                " (m/s)")
-            println("  geopot height: ", 
-                    (round(minimum(grid_h); digits = 4), 
-                    round(maximum(grid_h); digits = 4)),
-                " (m * m*s-2)")
-            println("      vorticity: ", 
-                    (round(minimum(grid_vor); digits = 9), 
-                    round(maximum(grid_vor); digits = 9)),
-                " (1/s)")
-            println("     divergence: ", 
-                    (round(minimum(grid_div); digits = 9), 
-                    round(maximum(grid_div); digits = 9)),
-                " (1/s)")
-            println(repeat("***", 30))
+            Display_Current_State!(file = output_docs,
+                                   tick = div(integrator.time, hour_to_sec),
+                                   grid_u = grid_u,
+                                   grid_v = grid_v,
+                                   grid_h = grid_h,
+                                   grid_vor = grid_vor,
+                                   grid_div = grid_div)
         end
     end
     
@@ -228,6 +230,6 @@ function Shallow_Water_Main(;model_name::String = "Shallow_Water",
     ### Output stage
     Finalize_Output!(output_manager = output_manager)
     Generate_Output!(output_manager = output_manager)
-    
+    close(output_docs)
     return nothing
 end
