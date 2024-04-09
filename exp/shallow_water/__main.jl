@@ -30,8 +30,8 @@ function Shallow_Water_Main(;model_name::String = "Shallow_Water",
         #  
     end
     # Resolution
-    nλ = 128
-    nθ = 64
+    nλ = 512
+    nθ = 256
     nd = 1
     num_fourier = floor(Int64, nθ*(2/3))
     num_spherical = num_fourier + 1
@@ -44,8 +44,8 @@ function Shallow_Water_Main(;model_name::String = "Shallow_Water",
     
     # Time
     start_time = 0
-    end_time = 86400*1
-    Δt = 3600
+    end_time = 86400*5
+    Δt = 60
     
     # Convective efficiency
     kappa_chi = 1 / (0.5 * 86400)
