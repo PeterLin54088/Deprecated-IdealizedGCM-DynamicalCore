@@ -1,4 +1,6 @@
+
 # output docs
+output/
 output_*.txt
 
 # HDF5
