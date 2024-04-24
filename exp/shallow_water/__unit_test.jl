@@ -113,18 +113,24 @@ function IC_Profiler(IC::String = "Case 1")
     elseif IC == "None"
         # non-divergent flow, with multiple vortex
         λc = mesh.λc
+        θc = mesh.θc
         sinλ = sin.(λc)
         cosλ = cos.(λc)
         for i = 1:nλ
             for j = 1:nθ
                 for k = 1:nd
-                    grid_u[i,j,k] = 10.0
+                    grid_u[i,j,k] = 0.0
                     grid_v[i,j,k] = 0.0
-                    grid_vor[i,j,k] = 0.0
+                    grid_vor[i,j,k] = 4e-5*exp(-((θc[j]-19*pi/180)/(3*pi/180))^2)
                     grid_div[i,j,k] = 0.0
                 end
             end
         end
+        spe_vor = zeros(ComplexF64, num_fourier+1, num_spherical+1, nd)
+        spe_div = zeros(ComplexF64, num_fourier+1, num_spherical+1, nd)
+        Trans_Grid_To_Spherical!(mesh, grid_vor, spe_vor)
+        Trans_Grid_To_Spherical!(mesh, grid_div, spe_div)
+        UV_Grid_From_Vor_Div!(mesh, spe_vor, spe_div, grid_u, grid_v)
     else
         error("Initial condition ", IC, " has not implemented yet")
     end
